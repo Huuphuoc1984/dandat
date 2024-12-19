@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biểu Đồ Cột</title>
+    <title>Top 5 Ngành</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -26,12 +26,6 @@
             width: 95%; /* Đảm bảo chiều rộng vừa với màn hình */
             height: 70%; /* Chiều cao chiếm 70% màn hình */
             margin: 0 auto;
-        }
-
-        #info {
-            margin-top: 10px;
-            color: #333;
-            font-size: 14px;
         }
 
         .button-container {
@@ -59,11 +53,10 @@
     </style>
 </head>
 <body>
-    <h1>Biểu Đồ Cột</h1>
+    <h1>Top 5 Ngành</h1>
     <div id="chartContainer">
         <canvas id="chart"></canvas>
     </div>
-    <div id="info">Đang tải dữ liệu...</div>
 
     <div class="button-container">
         <button onclick="renderChart('NganHang')">Ngân hàng</button>
@@ -85,7 +78,7 @@
                 const data = await response.json();
                 return data;
             } catch (error) {
-                document.getElementById('info').innerText = `Lỗi khi lấy dữ liệu: ${error.message}`;
+                console.error(`Lỗi khi lấy dữ liệu: ${error.message}`);
                 throw error;
             }
         }
@@ -98,7 +91,6 @@
             const filteredData = data.filter(item => item.nhomNganh === nganh);
 
             if (filteredData.length === 0) {
-                document.getElementById('info').innerText = `Không có dữ liệu cho ngành: ${nganh}`;
                 if (chart) chart.destroy();
                 return;
             }
@@ -149,23 +141,18 @@
                     scales: {
                         x: {
                             title: {
-                                display: true,
-                                text: 'Cổ Phiếu'
+                                display: false // Ẩn tiêu đề trục X
                             }
                         },
                         y: {
                             beginAtZero: true,
                             title: {
-                                display: true,
-                                text: 'Giá trị'
+                                display: false // Ẩn tiêu đề trục Y
                             }
                         }
                     }
                 }
             });
-
-            // Cập nhật thông tin dưới biểu đồ
-            document.getElementById('info').innerText = `Biểu đồ của ngành: ${nganh} - Cập nhật lúc: ${new Date().toLocaleTimeString()}`;
         }
 
         // Gọi vẽ biểu đồ lần đầu
