@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biểu Đồ Cột</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #chartContainer {
+            width: 800px;
+            height: 600px;
+        }
+
+        #info {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Biểu Đồ Cột</h1>
+    <div id="chartContainer">
+        <canvas id="chart"></canvas>
+    </div>
+    <div id="info">Đang tải dữ liệu...</div>
+
+    <div class="button-container">
+        <!-- Nút chuyển đổi ngành -->
+        <button onclick="renderChart('NganHang')">Ngân hàng</button>
+        <button onclick="renderChart('ChungKhoan')">Chứng khoán</button>
+        <button onclick="renderChart('BatDongSan')">Bất động sản</button>
+        <button onclick="renderChart('Thep')">Thép</button>
+        <button onclick="renderChart('DauTuCong')">Đầu tư công</button>
+    </div>
+
+    <script>
+        const apiUrl = "https://script.google.com/macros/s/AKfycbx1PK3zvOE0uLJPwwMV55FA4sN8IXwcB1XvtX3aZTHuHsgi9_L1ZDSHgieW-ILBnQ/exec/exec";
+        let chart;
+
+        // Hàm lấy dữ liệu từ API
+        async function fetchData() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                const data = await response.json();
+                console.log('Fetched Data:', data); // Log dữ liệu JSON để kiểm tra
+                return data;
+            } catch (error) {
+                document.getElementById('info').innerText = `Lỗi khi lấy dữ liệu: ${error.message}`;
+                throw error;
+            }
+        }
+
+        // Hàm vẽ biểu đồ cột
+        async function renderChart(nganh = 'NganHang') {
+            const data = await fetchData();
+
+            // Lọc dữ liệu theo ngành
+            const filteredData = data.filter(item => item.nhomNganh === nganh);
+
+            if (filteredData.length === 0) {
+                document.getElementById('info').innerText = `Không có dữ liệu cho ngành: ${nganh}`;
+                if (chart) chart.destroy();
+                return;
+            }
+
+            // Chuẩn bị dữ liệu
+            const labels = filteredData.map(item => item.coPhieu); // Lấy danh sách mã cổ phiếu
+            const strength = filteredData.map(item => item.sucManhRSI); // Lấy sức mạnh RSI của từng mã
+            const trend = filteredData.map(item => item.diemXuHuong); // Lấy điểm xu hướng của từng mã
+
+            const ctx = document.getElementById('chart').getContext('2d');
+
+            // Xóa biểu đồ cũ nếu đã tồn tại
+            if (chart) {
+                chart.destroy();
+            }
+
+            // Tạo biểu đồ cột mới
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels, // Nhãn là danh sách mã cổ phiếu
+                    datasets: [
+                        {
+                            label: 'Sức Mạnh RSI',
+                            data: strength, // Dữ liệu sức mạnh RSI
+                            backgroundColor: 'rgba(75, 192, 192, 0.8)', // Màu cột
+                            borderColor: 'rgba(75, 192, 192, 1)', // Viền cột
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Điểm Xu Hướng',
+                            data: trend, // Dữ liệu điểm xu hướng
+                            backgroundColor: 'rgba(255, 99, 132, 0.8)', // Màu cột
+                            borderColor: 'rgba(255, 99, 132, 1)', // Viền cột
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Cập nhật thông tin dưới biểu đồ
+            document.getElementById('info').innerText = `Biểu đồ của ngành: ${nganh} - Cập nhật lúc: ${new Date().toLocaleTimeString()}`;
+        }
+
+        // Gọi vẽ biểu đồ lần đầu
+        renderChart();
+    </script>
+</body>
+</html>
