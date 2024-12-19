@@ -11,34 +11,46 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100vh;
             margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 10px 0;
         }
 
         #chartContainer {
-            width: 800px;
-            height: 600px;
+            width: 95%; /* Đảm bảo chiều rộng vừa với màn hình */
+            height: 70%; /* Chiều cao chiếm 70% màn hình */
+            margin: 0 auto;
         }
 
         #info {
-            margin-top: 20px;
+            margin-top: 10px;
             color: #333;
+            font-size: 14px;
         }
 
         .button-container {
             margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap; /* Đảm bảo nút không bị tràn */
+            justify-content: center;
         }
 
         button {
             margin: 5px;
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 10px 15px;
+            font-size: 14px;
             cursor: pointer;
             background-color: #007bff;
             color: white;
             border: none;
             border-radius: 5px;
+            transition: background-color 0.3s;
         }
 
         button:hover {
@@ -54,7 +66,6 @@
     <div id="info">Đang tải dữ liệu...</div>
 
     <div class="button-container">
-        <!-- Nút chuyển đổi ngành -->
         <button onclick="renderChart('NganHang')">Ngân hàng</button>
         <button onclick="renderChart('ChungKhoan')">Chứng khoán</button>
         <button onclick="renderChart('BatDongSan')">Bất động sản</button>
@@ -63,7 +74,7 @@
     </div>
 
     <script>
-        const apiUrl = "https://script.google.com/macros/s/AKfycbx1PK3zvOE0uLJPwwMV55FA4sN8IXwcB1XvtX3aZTHuHsgi9_L1ZDSHgieW-ILBnQ/exec/exec";
+        const apiUrl = "https://script.google.com/macros/s/AKfycbx1PK3zvOE0uLJPwwMV55FA4sN8IXwcB1XvtX3aZTHuHsgi9_L1ZDSHgieW-ILBnQ/exec";
         let chart;
 
         // Hàm lấy dữ liệu từ API
@@ -72,7 +83,6 @@
                 const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
                 const data = await response.json();
-                console.log('Fetched Data:', data); // Log dữ liệu JSON để kiểm tra
                 return data;
             } catch (error) {
                 document.getElementById('info').innerText = `Lỗi khi lấy dữ liệu: ${error.message}`;
@@ -129,9 +139,27 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false, // Đảm bảo biểu đồ phù hợp với kích thước container
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
                     scales: {
-                        x: { beginAtZero: true },
-                        y: { beginAtZero: true }
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Cổ Phiếu'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Giá trị'
+                            }
+                        }
                     }
                 }
             });
