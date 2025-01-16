@@ -1,162 +1,56 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top 5 Ngành</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1 {
-            font-size: 24px;
-            margin: 10px 0;
-        }
-
-        #chartContainer {
-            width: 95%; /* Đảm bảo chiều rộng vừa với màn hình */
-            height: 70%; /* Chiều cao chiếm 70% màn hình */
-            margin: 0 auto;
-        }
-
-        .button-container {
-            margin-top: 20px;
-            display: flex;
-            flex-wrap: wrap; /* Đảm bảo nút không bị tràn */
-            justify-content: center;
-        }
-
-        button {
-            margin: 5px;
-            padding: 10px 15px;
-            font-size: 14px;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sector Image Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    #buttons {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    img {
+      margin-top: 20px;
+      max-width: 80%;
+      height: auto;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Top 5 Ngành</h1>
-    <div id="chartContainer">
-        <canvas id="chart"></canvas>
-    </div>
+  <!-- Placeholder for image -->
+  <div>
+    <img id="sectorImage" src="picture2.png" alt="Image for Bank">
+  </div>
 
-    <div class="button-container">
-        <button onclick="renderChart('NganHang')">Ngân hàng</button>
-        <button onclick="renderChart('ChungKhoan')">Chứng khoán</button>
-        <button onclick="renderChart('BatDongSan')">Bất động sản</button>
-        <button onclick="renderChart('Thep')">Thép</button>
-        <button onclick="renderChart('DauTuCong')">Đầu tư công</button>
-    </div>
+  <!-- Buttons for sectors -->
+  <div id="buttons">
+    <button onclick="showImage('picture2.png')">Bank</button>
+    <button onclick="showImage('picture3.png')">Chứng khoán</button>
+    <button onclick="showImage('picture4.png')">Bất động sản</button>
+    <button onclick="showImage('picture5.png')">Thép</button>
+    <button onclick="showImage('picture6.png')">Đầu tư công</button>
+  </div>
 
-    <script>
-        const apiUrl = "https://script.google.com/macros/s/AKfycbx1PK3zvOE0uLJPwwMV55FA4sN8IXwcB1XvtX3aZTHuHsgi9_L1ZDSHgieW-ILBnQ/exec";
-        let chart;
-
-        // Hàm lấy dữ liệu từ API
-        async function fetchData() {
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error(`Lỗi khi lấy dữ liệu: ${error.message}`);
-                throw error;
-            }
-        }
-
-        // Hàm vẽ biểu đồ cột
-        async function renderChart(nganh = 'NganHang') {
-            const data = await fetchData();
-
-            // Lọc dữ liệu theo ngành
-            const filteredData = data.filter(item => item.nhomNganh === nganh);
-
-            if (filteredData.length === 0) {
-                if (chart) chart.destroy();
-                return;
-            }
-
-            // Chuẩn bị dữ liệu
-            const labels = filteredData.map(item => item.coPhieu); // Lấy danh sách mã cổ phiếu
-            const strength = filteredData.map(item => item.sucManhRSI); // Lấy sức mạnh RSI của từng mã
-            const trend = filteredData.map(item => item.diemXuHuong); // Lấy điểm xu hướng của từng mã
-
-            const ctx = document.getElementById('chart').getContext('2d');
-
-            // Xóa biểu đồ cũ nếu đã tồn tại
-            if (chart) {
-                chart.destroy();
-            }
-
-            // Tạo biểu đồ cột mới
-            chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels, // Nhãn là danh sách mã cổ phiếu
-                    datasets: [
-                        {
-                            label: 'Sức Mạnh RSI',
-                            data: strength, // Dữ liệu sức mạnh RSI
-                            backgroundColor: 'rgba(75, 192, 192, 0.8)', // Màu cột
-                            borderColor: 'rgba(75, 192, 192, 1)', // Viền cột
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Điểm Xu Hướng',
-                            data: trend, // Dữ liệu điểm xu hướng
-                            backgroundColor: 'rgba(255, 99, 132, 0.8)', // Màu cột
-                            borderColor: 'rgba(255, 99, 132, 1)', // Viền cột
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false, // Đảm bảo biểu đồ phù hợp với kích thước container
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top'
-                        }
-                    },
-                    scales: {
-                        x: {
-                            title: {
-                                display: false // Ẩn tiêu đề trục X
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: false // Ẩn tiêu đề trục Y
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Gọi vẽ biểu đồ lần đầu
-        renderChart();
-    </script>
+  <script>
+    // Function to show the corresponding image
+    function showImage(imageName) {
+      const imgElement = document.getElementById('sectorImage');
+      imgElement.src = imageName;
+      imgElement.alt = `Image for ${imageName}`;
+    }
+  </script>
 </body>
 </html>
