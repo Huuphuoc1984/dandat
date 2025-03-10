@@ -9,15 +9,28 @@
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 20px;
+      background-color: #f9f9f9;
     }
     #buttons {
       margin-top: 20px;
     }
     button {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 16px;
+      padding: 10px 15px;
+      margin: 5px;
+      font-size: 14px;
       cursor: pointer;
+      border-radius: 5px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    button.active {
+      box-shadow: 0 0 15px #ffd700;
+      background-color: #ff9800;
     }
     img {
       margin-top: 20px;
@@ -27,40 +40,50 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       border-radius: 8px;
     }
+    h2 {
+      color: #333;
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
-  <h1>Top 10 Ngành</h1>
-  <br><br> 
+  <h1>Top 5 Ngành</h1>
 
-  <!-- Placeholder for image -->
+  <!-- Sector title -->
+  <h2 id="sectorTitle">Bank</h2>
+
+  <!-- Sector image -->
   <div>
-    <img id="sectorImage" src="Picture2.png" alt="Image for Bank">
+    <img id="sectorImage" src="Picture2.png" alt="Bank">
   </div>
 
-  <!-- Buttons for sectors -->
+  <!-- Buttons for selecting sectors -->
   <div id="buttons">
-    <button onclick="showImage('Picture2.png')">Bank</button>
-    <button onclick="showImage('Picture3.png')">Chứng khoán</button>
-    <button onclick="showImage('Picture4.png')">Bất động sản</button>
-    <button onclick="showImage('Picture5.png')">Thép</button>
-    <button onclick="showImage('Picture6.png')">Đầu tư công</button>
-    <button onclick="showImage('phu2.png')">Bán lẻ</button>
-    <button onclick="showImage('phu3.png')">Phòng thủ</button>
-    <button onclick="showImage('phu4.png')">HC-NN-PB</button>
-    <button onclick="showImage('phu5.png')">Xuất khẩu</button>
-    <button onclick="showImage('phu6.png')">BĐS-KCN</button>
+    <button class="active" onclick="showSector(this,'Picture2.png', 'Bank')">Bank</button>
+    <button onclick="showSector(this,'Picture3.png', 'Chứng khoán')">Chứng khoán</button>
+    <button onclick="showSector(this,'Picture4.png', 'Bất động sản')">Bất động sản</button>
+    <button onclick="showSector(this,'Picture5.png', 'Thép')">Thép</button>
+    <button onclick="showSector(this,'Picture6.png', 'Đầu tư công')">Đầu tư công</button>
+    <button onclick="showSector(this,'phu2.png', 'Bán lẻ')">Bán lẻ</button>
+    <button onclick="showSector(this,'phu3.png', 'Phòng thủ')">Phòng thủ</button>
+    <button onclick="showSector(this,'phu4.png', 'HC-NN-PB')">HC-NN-PB</button>
+    <button onclick="showSector(this,'phu5.png', 'Xuất khẩu')">Xuất khẩu</button>
+    <button onclick="showSector(this,'phu6.png', 'BĐS-KCN')">BĐS-KCN</button>
   </div>
-  <br><br> 
-  <br><br> 
-  <br><br> 
 
   <script>
-    // Function to show the corresponding image
-    function showImage(imageName) {
-      const imgElement = document.getElementById('sectorImage');
-      imgElement.src = imageName;
-      imgElement.alt = `Image for ${imageName}`;
+    function showSector(btn, imageSrc, sectorName) {
+      // Update image and sector title
+      document.getElementById('sectorImage').src = imageSrc;
+      document.getElementById('sectorImage').alt = sectorName;
+      document.getElementById('sectorTitle').textContent = sectorName;
+
+      // Remove active class from all buttons
+      let buttons = document.querySelectorAll('#buttons button');
+      buttons.forEach(button => button.classList.remove('active'));
+
+      // Add active class to the clicked button
+      btn.classList.add('active');
     }
   </script>
 </body>
